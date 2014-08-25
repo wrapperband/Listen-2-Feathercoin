@@ -1,11 +1,11 @@
-## Listen 2 Feathercoin - Listen To Feathercoin ##
+# Listen 2 Feathercoin - Listen To Feathercoin #
 
 Current version hosted at [**Listen 2 Feathercoin**](http://http://95.85.57.10:19327/static/Listen-To-Feathercoin/). (ListenToBitcoin.com has been sold.)
 
 Realtime Bitcoin transaction visualizer written in HTML/Javascript. See and hear new transactions, trades and blocks as they propagate through the Bitcoin Network. Test version for Feathercoin network.
 
 
-# BitListen - Listen To Bitcoin #
+### BitListen - Listen To Bitcoin ###
 
 Current version hosted at [**BitListen.com**](http://bitlisten.com/). (ListenToBitcoin.com has been sold.)
 
