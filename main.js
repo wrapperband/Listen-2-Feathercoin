@@ -9,7 +9,7 @@ var globalMute = false;
 
 var instanceId = 0;
 var pageDivId = "pageDiv";
-var TICK_SPEED = 50;
+var TICK_SPEED = 55;
 
 var updateTargets = new Array();
 
