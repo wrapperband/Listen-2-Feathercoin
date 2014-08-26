@@ -15,9 +15,9 @@ var updateTargets = new Array();
 
 // Preload images
 var bubbleImage = new Image();
-bubbleImage.src = "images/bubble.png";
+bubbleImage.src = "images/FTCbubble.png";
 var blockImage = new Image();
-blockImage.src = "images/block.png";
+blockImage.src = "images/FTCblock.png";
 
 var debugSpawner;
 
