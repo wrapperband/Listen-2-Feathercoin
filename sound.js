@@ -76,7 +76,7 @@ Sound.init = function() {
 	});
 	
 	globalScalePitch = $("#scalePitchCheckBox").attr("checked");
-	Sound.change(0);
+	Sound.change(1);
 }
 
 Sound.change = function(instrument_number) {
