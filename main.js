@@ -9,7 +9,7 @@ var globalMute = false;
 
 var instanceId = 0;
 var pageDivId = "pageDiv";
-var TICK_SPEED = 85;
+var TICK_SPEED = 185;
 
 var updateTargets = new Array();
 
@@ -78,8 +78,8 @@ $(window).bind("load", function() {
 	} else {
 		if ($("#blockchainCheckBox").prop("checked"))
 			TransactionSocket.init();
-		if ($("#mtgoxCheckBox").prop("checked"))
-			TradeSocket.init();
+// 		if ($("#mtgoxCheckBox").prop("checked"))
+// 			TradeSocket.init();
 	}
 
 	globalUpdate();
