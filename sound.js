@@ -1,4 +1,4 @@
-var globalVolume = 50;
+var globalVolume = 20;
 var globalScalePitch;
 var globalBank;
 //init volume at 50%
