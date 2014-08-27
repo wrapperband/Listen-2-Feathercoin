@@ -22,7 +22,7 @@ function Transaction(bitcoins, highlight, currency, currencyName) {
 	this.initPosition();
 
 	// Sound
-	var maxBitcoins = 1000;
+	var maxBitcoins = 100; // changed from 1000
 	var minVolume = 0.3;
 	var maxVolume = 0.7;
 	var volume = bitcoins / (maxBitcoins / (maxVolume - minVolume)) + minVolume;
