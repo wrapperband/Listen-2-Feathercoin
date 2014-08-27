@@ -10,8 +10,8 @@ function Sound() {
 
 var soundBank = [];
 	// the second number is the number of sound files available
-	soundBank[0] = ["planet", 33];
-	soundBank[1] = ["celesta", 22];
+	soundBank[0] = ["celesta", 22];
+	soundBank[1] = ["planet", 33];
 	soundBank[2] = ["wikki", 13];
 
 function zeroPad(num, places) {
