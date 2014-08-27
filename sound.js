@@ -184,7 +184,7 @@ Sound.playPitchAtVolume = function(volume, pitch) {
 	if (globalMute)
 		return;
 	// Find the index corresponding to the requested pitch
-	var index = Math.floor(pitch / 50.0 * currentSound.length);
+	var index = Math.floor(pitch / 200.0 * currentSound.length);
 	//console.log("Pitch: " + pitch);
 	
 	// Here we fuzz the index a bit to prevent the same sound
