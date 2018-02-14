@@ -7,22 +7,18 @@ var lastBlockHeight = 0;
 var HttpClient = function() {
     this.get = function(aUrl, aCallback) {
         var anHttpRequest = new XMLHttpRequest();
-        anHttpRequest.onreadystatechange = function() { 
-            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200){
+                  
+        anHttpRequest.onload = function() { 
+            if ( anHttpRequest.status == 200){
+              //  console.log ('state: '+ anHttpRequest.readyState + ', status: '+ anHttpRequest.status);
+              //  console.log (anHttpRequest.responseText+'\n');
                 aCallback(anHttpRequest.responseText);
             }
             else {
-                if (anHttpRequest.status != 200){
-                    console.log('Webrequest: '+aUrl+' failed\n Status: '+ anHttpRequest.status)
-                }
-                else {
-                    console.log('Webrequest: '+aUrl+' failed\n Status: unknown problem')
-                }
-                    aCallback('Error');
+                console.log ('state: '+ anHttpRequest.readyState + ', status: '+ anHttpRequest.status);
             }
         }
-
-        anHttpRequest.open( "GET", aUrl, true );            
+        anHttpRequest.open( "GET", aUrl, true );  
         anHttpRequest.send( null );
     }
 }
@@ -131,25 +127,17 @@ TransactionSocket.init = function() {
 			*/
 })
             socket.on(eventNewBlock, function(data) {
+                var apiRasponse;
                 console.log("newBlock "+data+" transacted: "+transacted);
-                client.get(fsightServer+'insight-api/block/'+data, function(response) {
-                    console.log ("Web: " +response);
+                client.get(fsightServer+'insight-api/block/'+data, function(apiResponse) {
+                    var json=JSON.parse(apiResponse);
+                    console.log(json.height+"..."+json.size);
+                    new Block(json.height, transactions, transacted, json.size);
+                    transacted =0;
+                    transactions=0; //   console.log ("Web: " +response);
                 }) 
+               
                 
-                /* we don't always get back a proper response
-                 * so set block height and size to defaul values
-                 */
-                try { 
-                    new Block(response.height, transactions, transacted, response.size);
-                }
-                catch (error) {new Block(0, transactions, transacted, 100);
-                
-                    
-                }
-                
-                
-                transacted =0;
-                transactions=0;
             })
 
 	} else {
