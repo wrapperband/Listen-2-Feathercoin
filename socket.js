@@ -4,6 +4,23 @@ var DELAY_CAP = 1000;
 
 var lastBlockHeight = 0;
 
+var HttpClient = function() {
+    this.get = function(aUrl, aCallback) {
+        var anHttpRequest = new XMLHttpRequest();
+        anHttpRequest.onreadystatechange = function() { 
+            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200){
+                aCallback(anHttpRequest.responseText);
+            }
+            else {
+                aCallback('result: '+anHttpRequest.status);
+            }
+        }
+
+        anHttpRequest.open( "GET", aUrl, true );            
+        anHttpRequest.send( null );
+    }
+}
+
 function TransactionSocket() {
 
 }
@@ -17,18 +34,22 @@ TransactionSocket.init = function() {
         eventNewTx = 'tx';
         eventNewBlock = 'block';
         room = 'inv';
-        
     
-        
-    var socket = io("http://wb2:3001/");
+    
+    var client = new HttpClient();
+    var fsightServer = "http://wb2:3001/";
+    
+    var socket = io(fsightServer);
     console.log('connecting to fsight....');
 	StatusBox.reconnecting("blockchain");
+    
     
     socket.on('connect', function() {
       // Join the room.
         StatusBox.connected("blockchain");
         console.log('connected, joining room!');
-      socket.emit('subscribe', room);
+        socket.emit('subscribe', room);
+        toggleInterface();        
     })
 		//var connection = new ReconnectingWebSocket('ws://ws.blockchain.info:8335/inv');
 		//socket = connection;
@@ -53,6 +74,8 @@ TransactionSocket.init = function() {
 		//})
 
 		socket.on ('close', function() {
+            //show interface
+            toggleInterface();
 			console.log('Blockchain.info: Connection closed');
 			if ($("#blockchainCheckBox").prop("checked"))
 				StatusBox.reconnecting("blockchain");
@@ -102,10 +125,13 @@ TransactionSocket.init = function() {
 			*/
 })
             socket.on(eventNewBlock, function(data) {
-            //console.log("newBlock "+data+" transacted: "+transacted);
-            new Block(23456, transactions, transacted, 100)
-            transacted =0;
-            transactions=0;
+                console.log("newBlock "+data+" transacted: "+transacted);
+                client.get(fsightServer+'insight-api/block/'+data, function(response) {
+                    console.log ("Web: " +response);
+                }) 
+                new Block(response.height, transactions, transacted, response.size);
+                transacted =0;
+                transactions=0;
             })
 
 	} else {
@@ -116,8 +142,12 @@ TransactionSocket.init = function() {
 }
 
 TransactionSocket.close = function() {
-	if (socket)
+	try {
 		socket.close();
+    }
+    catch (error) {
+        console.log("warn: close of socket failed");
+    }
 	StatusBox.closed("blockchain");
 }
 function TradeSocket() {

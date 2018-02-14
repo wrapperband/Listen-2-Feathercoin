@@ -7,7 +7,7 @@ var globalMute = false;
 
 var instanceId = 0;
 var pageDivId = "pageDiv";
-var TICK_SPEED = 185;
+var TICK_SPEED = 100;
 
 var updateTargets = new Array();
 
@@ -92,6 +92,7 @@ var globalUpdate = function() {
 	}
 	setTimeout(globalUpdate, TICK_SPEED);
 }
+
 
 window.onbeforeunload = function(e) {
 	clearInterval(globalUpdate);
