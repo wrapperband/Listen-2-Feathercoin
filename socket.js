@@ -12,7 +12,13 @@ var HttpClient = function() {
                 aCallback(anHttpRequest.responseText);
             }
             else {
-                aCallback('result: '+anHttpRequest.status);
+                if (anHttpRequest.status != 200){
+                    console.log('Webrequest: '+aUrl+' failed\n Status: '+ anHttpRequest.status)
+                }
+                else {
+                    console.log('Webrequest: '+aUrl+' failed\n Status: unknown problem')
+                }
+                    aCallback('Error');
             }
         }
 
@@ -129,7 +135,19 @@ TransactionSocket.init = function() {
                 client.get(fsightServer+'insight-api/block/'+data, function(response) {
                     console.log ("Web: " +response);
                 }) 
-                new Block(response.height, transactions, transacted, response.size);
+                
+                /* we don't always get back a proper response
+                 * so set block height and size to defaul values
+                 */
+                try { 
+                    new Block(response.height, transactions, transacted, response.size);
+                }
+                catch (error) {new Block(0, transactions, transacted, 100);
+                
+                    
+                }
+                
+                
                 transacted =0;
                 transactions=0;
             })
