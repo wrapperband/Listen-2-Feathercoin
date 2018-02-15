@@ -4,93 +4,130 @@ var DELAY_CAP = 1000;
 
 var lastBlockHeight = 0;
 
+var HttpClient = function() {
+    this.get = function(aUrl, aCallback) {
+        var anHttpRequest = new XMLHttpRequest();
+                  
+        anHttpRequest.onload = function() { 
+            if ( anHttpRequest.status == 200){
+              //  console.log ('state: '+ anHttpRequest.readyState + ', status: '+ anHttpRequest.status);
+              //  console.log (anHttpRequest.responseText+'\n');
+                aCallback(anHttpRequest.responseText);
+            }
+            else {
+                console.log ('state: '+ anHttpRequest.readyState + ', status: '+ anHttpRequest.status);
+            }
+        }
+        anHttpRequest.open( "GET", aUrl, true );  
+        anHttpRequest.send( null );
+    }
+}
+
 function TransactionSocket() {
 
 }
 
 TransactionSocket.init = function() {
 	// Terminate previous connection, if any
-	if (this.connection)
-		this.connection.close();
+	if (socket)
+		socket.close();
 
 	if ('WebSocket' in window) {
-		var connection = new ReconnectingWebSocket('ws://ws.blockchain.info:8335/inv');
-		this.connection = connection;
+        eventNewTx = 'tx';
+        eventNewBlock = 'block';
+        room = 'inv';
+    
+    
+    var client = new HttpClient();
+    var fsightServer = "http://wb2:3001/";
+    
+    var socket = io(fsightServer);
+    console.log('connecting to fsight....');
+	StatusBox.reconnecting("blockchain");
+    
+    
+    socket.on('connect', function() {
+      // Join the room.
+        StatusBox.connected("blockchain");
+        console.log('connected, joining room!');
+        socket.emit('subscribe', room);
+        toggleInterface();        
+    })
+		//var connection = new ReconnectingWebSocket('ws://ws.blockchain.info:8335/inv');
+		//socket = connection;
+           
 
-		StatusBox.reconnecting("blockchain");
 
-		connection.onopen = function() {
-			console.log('Blockchain.info: Connection open!');
-			StatusBox.connected("blockchain");
-			var newTransactions = {
-				"op" : "unconfirmed_sub"
-			};
-			var newBlocks = {
-				"op" : "blocks_sub"
-			};
-			connection.send(JSON.stringify(newTransactions));
-			connection.send(JSON.stringify(newBlocks));
-			connection.send(JSON.stringify({
-				"op" : "ping_tx"
-			}));
+		//socket.on('connect', function() {
+		//	console.log('Fsight.tips: Connection open!');
+		//	StatusBox.connected("blockchain");
+		//	var newTransactions = {
+		//		"op" : "unconfirmed_sub"
+		//	};
+		//	var newBlocks = {
+		//		"op" : "blocks_sub"
+		//	};
+		//	connection.send(JSON.stringify(newTransactions));
+		//	connection.send(JSON.stringify(newBlocks));
+		//	connection.send(JSON.stringify({
+		//		"op" : "ping_tx"
+		//	}));
 			// Display the latest transaction so the user sees something.
-		}
+		//})
 
-		connection.onclose = function() {
+		socket.on ('close', function() {
+            //show interface
+            toggleInterface();
 			console.log('Blockchain.info: Connection closed');
 			if ($("#blockchainCheckBox").prop("checked"))
 				StatusBox.reconnecting("blockchain");
 			else
 				StatusBox.closed("blockchain");
-		}
+		})
 
-		connection.onerror = function(error) {
+		socket.on('error', function(error) {
 			console.log('Blockchain.info: Connection Error: ' + error);
-		}
+		})
 
-		connection.onmessage = function(e) {
-			var data = JSON.parse(e.data);
+        var transacted = 0;
+        var transactions=0;
+        var bitcoins=0;
+
+		socket.on(eventNewTx, function(data) {
+            console.log("txout: "+data.valueOut);
 
 			// New Transaction
-			if (data.op == "utx") {
-				var transacted = 0;
 
-				for (var i = 0; i < data.x.out.length; i++) {
-					transacted += data.x.out[i].value;
-				}
+			transacted += data.valueOut;
+            //console.log("transacted "+ transacted);
+            transactions++;
 
-				var bitcoins = transacted / satoshi;
-				//console.log("Transaction: " + bitcoins + " BTC");
+            bitcoins = (transacted / satoshi);
+				//console.log("Transaction: " + bitcoins + " FTC");
 
-				var donation = false;
-                                var soundDonation = false;
-				var outputs = data.x.out;
-				for (var i = 0; i < outputs.length; i++) {
-					if ((outputs[i].addr) == DONATION_ADDRESS || (outputs[i].addr) == SOUND_DONATION_ADDRESS) {
-						bitcoins = data.x.out[i].value / satoshi;
-						new Transaction(bitcoins, true);
-						return;
-					}
-				}
-
+            var donation = false;
+            var soundDonation = false;
+  
 				setTimeout(function() {
-					new Transaction(bitcoins);
+					new Transaction(data.valueOut);
 				}, Math.random() * DELAY_CAP);
 
-			} else if (data.op == "block") {
-				var blockHeight = data.x.height;
-				var transactions = data.x.nTx;
-				var volumeSent = data.x.estimatedBTCSent;
-				var blockSize = data.x.size;
-				// Filter out the orphaned blocks.
-				if (blockHeight > lastBlockHeight) {
-					lastBlockHeight = blockHeight;
-					console.log("New Block");
-					new Block(blockHeight, transactions, volumeSent, blockSize);
-				}
-			}
+            })
+        
+            socket.on(eventNewBlock, function(data) {
+                var apiRasponse;
+                console.log("newBlock "+data+" transacted: "+transacted);
+                client.get(fsightServer+'insight-api/block/'+data, function(apiResponse) {
+                    var json=JSON.parse(apiResponse);
+                    console.log(json.height+"..."+json.size);
+                    new Block(json.height, transactions, transacted, json.size);
+                    transacted =0;
+                    transactions=0; //   console.log ("Web: " +response);
+                }) 
+               
+                
+            })
 
-		}
 	} else {
 		//WebSockets are not supported.
 		console.log("No websocket support.");
@@ -99,8 +136,12 @@ TransactionSocket.init = function() {
 }
 
 TransactionSocket.close = function() {
-	if (this.connection)
-		this.connection.close();
+	try {
+		socket.close();
+    }
+    catch (error) {
+        console.log("warn: close of socket failed");
+    }
 	StatusBox.closed("blockchain");
 }
 function TradeSocket() {
@@ -109,12 +150,13 @@ function TradeSocket() {
 
 TradeSocket.init = function() {
 	// Terminate previous connection, if any
-	if (this.connection)
-		this.connection.close();
+	/*
+     * if (socket)
+		socket.close();
 
 	if ('WebSocket' in window) {
 		var connection = new ReconnectingWebSocket('ws://websocket.mtgox.com:80/mtgox');
-		this.connection = connection;
+		
 
 		StatusBox.reconnecting("mtgox");
 
@@ -164,10 +206,13 @@ TradeSocket.init = function() {
 		console.log("No websocket support.");
 		StatusBox.nosupport("mtgox");
 	}
+	*/
 }
 
 TradeSocket.close = function() {
-	if (this.connection)
-		this.connection.close();
+    /*
+	if (socket)
+		socket.close();
 	StatusBox.closed("mtgox");
+	*/
 }

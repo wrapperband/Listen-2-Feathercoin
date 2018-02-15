@@ -1,15 +1,13 @@
 // Set debugmode to true and transactions/trades will be
 // randomly generated, and no outside connections will be made.
 var DEBUG_MODE = false;
-
-var DONATION_ADDRESS;
 var SOUND_DONATION_ADDRESS;
 
 var globalMute = false;
 
 var instanceId = 0;
 var pageDivId = "pageDiv";
-var TICK_SPEED = 185;
+var TICK_SPEED = 100;
 
 var updateTargets = new Array();
 
@@ -65,10 +63,15 @@ var toggleInterface = function() {
 		$(".interface").fadeOut(500);
 		$("#hideInterface").html("[ Show Interface ]");
 		$("#hideInterface").css("opacity", "0.5");
+        
+        
+        
 	} else {
 		$(".interface").fadeIn(500);
 		$("#hideInterface").html("[ Hide Interface ]");
 		$("#hideInterface").css("opacity", "1");
+        
+        
 	}
 }
 
@@ -94,6 +97,7 @@ var globalUpdate = function() {
 	}
 	setTimeout(globalUpdate, TICK_SPEED);
 }
+
 
 window.onbeforeunload = function(e) {
 	clearInterval(globalUpdate);

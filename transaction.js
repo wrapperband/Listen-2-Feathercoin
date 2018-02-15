@@ -1,15 +1,19 @@
 function Transaction(bitcoins, highlight, currency, currencyName) {
 	Floatable.call(this);
 
-	this.area = bitcoins * 100 + 3000;
+	this.area = bitcoins * 10 + 3000;
+    if (this.area > 6000) {
+        this.area = 6000;
+    }
+    
 	this.width = this.height = Math.sqrt(this.area / Math.PI) * 2;
 
 	this.addImage(bubbleImage, this.width, this.height);
 	
-	var bitcoinString = "&#3647;" + bitcoins.toFixed(2);
+	var bitcoinString = "&#401;" + bitcoins.toFixed(2);
 	
-	if (bitcoinString == "&#3647;0.00")
-	bitcoinString = "<&#3647;0.01";
+	if (bitcoinString == "&#401;0.00")
+	bitcoinString = "<&#401;0.01";
 	
 	if (!highlight) {
 		this.addText(bitcoinString);

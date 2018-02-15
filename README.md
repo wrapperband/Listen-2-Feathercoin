@@ -1,26 +1,16 @@
 ## Listen 2 Feathercoin - Listen To Feathercoin  
 
-Current version hosted at [**Listen 2 Feathercoin**](http://95.85.57.10:19327/static/Listen-To-Feathercoin/).  
-
-Realtime Bitcoin transaction visualizer written in HTML/Javascript. See and hear new transactions, trades and blocks as they propagate through the Bitcoin Network. Test version for Feathercoin network.  
-
-### BitListen - Listen To Bitcoin  
-  
-Current version hosted at [**BitListen.com**](http://bitlisten.com/). (ListenToBitcoin.com has been sold.)  
-  
-Realtime Bitcoin transaction visualizer written in HTML/Javascript. See and hear new transactions, trades and blocks as they propagate through the Bitcoin Network.  
-  
 ### APIs and Libraries  
   
-Listen To Bitcoin / Feathercoin use these libraries:
+Listen To Feathercoin use these libraries:
   
 * [Howler.js](http://goldfirestudios.com/blog/104/howler.js-Modern-Web-Audio-Javascript-Library) by James Simpson
-* [Reconnecting-Websocket](https://github.com/joewalnes/reconnecting-websocket) by Joe Walnes
+* [Insight-api](http://insight.is/ )
 * [Minify](https://code.google.com/p/minify/) (for minifying Javascript)
   
 Listen To Feathercoin uses these APIs:
   
-* [Blockchain.info](http://blockchain.info/) WebSocket API (For Transactions)
+* [fsight.chain.tips](http://fsight.chain.tips/) WebSocket API (For Transactions)
   
 ### Using Minify   
   
