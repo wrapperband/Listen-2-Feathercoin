@@ -111,21 +111,9 @@ TransactionSocket.init = function() {
 				setTimeout(function() {
 					new Transaction(data.valueOut);
 				}, Math.random() * DELAY_CAP);
-/*
-    if (data.op == "block") {
-				var blockHeight = data.x.height;
-				var transactions = data.x.nTx;
-				var volumeSent = data.x.estimatedBTCSent;
-				var blockSize = data.x.size;
-				// Filter out the orphaned blocks.
-				if (blockHeight > lastBlockHeight) {
-					lastBlockHeight = blockHeight;
-					console.log("New Block");
-					new Block(blockHeight, transactions, volumeSent, blockSize);
-				}
-			}
-			*/
-})
+
+            })
+        
             socket.on(eventNewBlock, function(data) {
                 var apiRasponse;
                 console.log("newBlock "+data+" transacted: "+transacted);

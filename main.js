@@ -63,10 +63,15 @@ var toggleInterface = function() {
 		$(".interface").fadeOut(500);
 		$("#hideInterface").html("[ Show Interface ]");
 		$("#hideInterface").css("opacity", "0.5");
+        
+        
+        
 	} else {
 		$(".interface").fadeIn(500);
 		$("#hideInterface").html("[ Hide Interface ]");
 		$("#hideInterface").css("opacity", "1");
+        
+        
 	}
 }
 
